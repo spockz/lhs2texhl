@@ -27,7 +27,11 @@
   USAGE
   -----
   
-  > lhs2texhl INPUTFILE OUTPUTFILE
+  > lhs2TeX-hl INPUTFILE -o OUTPUTFILE
+  
+  For more details see:
+  
+  > lhs2TeX-hl --help
   
   Currently this is the only way to work with the tool.
   
