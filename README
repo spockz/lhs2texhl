@@ -8,6 +8,9 @@
   publicly available. Use it your own risk. I am not responsible for any
   conveniences or inconveniences caused by using this software.
   
+  It aims to detect the `kind' of a token either by it's use or it's
+  declaration. Trying to detect both local declarations and usages.
+  
   Regards,
   Alessandro Vermeulen
   
@@ -37,13 +40,14 @@
   * \lhsCHlitNumber
   * \lhsCHconstructor
   * \lhsCHfunction
+  * \lhsCHinfixoperator
   
   KNOWN ISSUES
   ------------
   
   * Infix operators may not work that great, or normal functions that are used
     `infix`.
-  * It doesn't do strings and char highlighting yet.
+  * It doesn't do literal string and char highlighting yet.
   * AGDA isn't supported yet unfortunately.
   * Errors aren't that informative. :)
   

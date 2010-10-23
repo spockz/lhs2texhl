@@ -10,6 +10,7 @@ import Language.Haskell.Exts
 
 -----------------------------
 
+import Literate.Agda
 import Literate.Haskell 
 import Literate.SimpleInfo
 
@@ -21,18 +22,27 @@ main = do args <- getArgs
             then
               putStrLn "Please provide two arguments exec INPUT OUTPUT"
             else
-              do hSetEncoding stdin  utf8
+              do 
+                 hSetEncoding stdin  utf8
                  hSetEncoding stdout utf8
                  hSetEncoding stderr utf8
-                 input  <- parseFile (head args)
+                 
                  output <- openFile  (head $ tail args) WriteMode
-                 let m = fromParse input
-                 let si = simpleinfo{ types          = listTypes m
-                                    , literalNumbers = listLitNumbers m
-                                    , constructors   = listConstructors m
-                                    , functions      = functionBindings m
-                                    }
-                 mapM_ (\(keyword, f) -> mapM_ (\ (seek,rep) -> hPutStrLn output $ printFormat keyword seek rep) 
-                                         (f si)) 
-                        mapping
+                 hSetEncoding output utf8
+
+                 let writer = writeOutput output
+                                  
+                 if (elem "--agda" args)
+                   then
+                     do si <- runAgda (head args)
+                        writer si Literate.Agda.mapping
+                   else
+                     do si <- runHaskell (head args)
+                        writer si Literate.Haskell.mapping
+                 hClose output
   where printFormat keyword seek rep = "%format " ++ seek ++ " = \" {\\lhsCH" ++ keyword ++ "{" ++ rep ++ "}}\"" 
+        writeOutput output si mapping = 
+                      mapM_ (\(keyword, f) -> mapM_ (\ (seek,rep) -> hPutStrLn output $ printFormat keyword seek rep) 
+                                              (f si)) 
+                                              mapping
+

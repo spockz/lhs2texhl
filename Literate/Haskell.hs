@@ -1,18 +1,27 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE NamedFieldPuns #-}
-module Literate.Haskell where
+module Literate.Haskell (runHaskell, mapping) where
 
 import Data.List (nub)
 import Data.Data
 import Data.Generics
-import Data.String.Utils
 import Language.Haskell.Exts
 
+import Language.LaTeX
 import Literate.SimpleInfo
  
 
 newtype M = M Module deriving (Typeable, Data)
 
+
+runHaskell :: FilePath -> IO SimpleInfo
+runHaskell fp = do mod <- parseFile fp
+                   case mod of
+                     (ParseOk m)           -> return $ getSimpleInfo m
+                     (ParseFailed loc err) -> error $ 
+                                                "Parsing failed at `" 
+                                                ++ show loc
+                                                ++ " " ++ err
 
 
 {- SYB Queries -}
@@ -31,25 +40,41 @@ listLitNumbers =  nub . everything (++) ([] `mkQ` listLitNumber)
  where  listLitNumber :: Literal -> [String]
         listLitNumber (Char   _) = []
         listLitNumber (String _) = []
-        listLitNumber (i)  = [prettyPrint i]
-
+        listLitNumber (Int v)  = [show v]
+        listLitNumber (Frac v)  = [show v]
+        listLitNumber (PrimInt v)  = [show v]
+        listLitNumber (PrimFloat v)  = [show v]
+        listLitNumber (PrimDouble v)  = [show v]
+        listLitNumber (_)  = []
 
 listConstructors ::  Module -> [String]
 listConstructors =  nub . everything (++) ([] `mkQ` listConstructor)
  where  listConstructor :: ConDecl -> [String]
-        listConstructor (ConDecl (i) _)  = [prettyPrint i]
+        listConstructor (ConDecl (i) _)      = [prettyPrint i]
         listConstructor (InfixConDecl _ i _) = [prettyPrint i]
         listConstructor (RecDecl i _)        = [prettyPrint i]
 
-functionBindings ::  Module -> [String]
-functionBindings =  nub . everything (++) ([] `mkQ` functionBinding `extQ` functionUse)
+listFunctions ::  Module -> [String]
+listFunctions =  nub . everything (++) ([] `mkQ` functionBinding `extQ` functionUse)
  where  functionBinding :: Match -> [String]
         functionBinding (Match _ (i) _ _ _ _)  = [prettyPrint i]
         functionUse :: Exp -> [String] 
         functionUse (App (Var qname) _) = [prettyPrint qname]
         functionUse _                   = []
+        
+listOperators ::  Module -> [String]
+listOperators =  nub . everything (++) ([] `mkQ` operatorUse)
+ where  operatorUse :: Exp -> [String] 
+        operatorUse (InfixApp _ qop _)  = [prettyPrint qop]
+        operatorUse _                   = []
 
 
+getSimpleInfo m = simpleinfo{ types          = listTypes m
+                            , literalNumbers = listLitNumbers m
+                            , constructors   = listConstructors m
+                            , functions      = listFunctions m
+                            , operators      = listOperators m
+                            }
 
 
 
@@ -61,10 +86,20 @@ mapping = [ ("keyword",      keywords)
           , ("litNumber",    mnumbers)
           , ("constructor",  mconstructors)
           , ("function",  mfunctions)
+          , ("infixoperator", moperators)
           ]
+          
+mtypes :: SimpleInfo -> [(String, String)]
+mtypes SimpleInfo{types} = map dp types
+moperators SimpleInfo{operators} = map (\ a -> (a, "\\ "++ makeLatexSafe a++"\\ ")) 
+                                       operators
+mnumbers SimpleInfo{literalNumbers} = map dp literalNumbers
+mconstructors SimpleInfo{constructors} = map (dp) constructors
+mfunctions SimpleInfo{functions   } = map (dp) functions
 
 keywords _ = map dp [ "data", "deriving", "type", "instance", "family", "where"
-                    , "newtype", "if", "then", "else", "case", "of"]
+                    , "newtype", "if", "then", "else", "case", "of", "module"
+                    , "as", "hiding", "import", "let", "in", "do", "class"]
 
 prelude  SimpleInfo{functions   } = map dp $
                     filter ((flip elem) functions)
@@ -103,7 +138,7 @@ prelude  SimpleInfo{functions   } = map dp $
                      "toRational" , "truncate" , "uncurry" , "undefined" , 
                      "unlines" , "until" , "unwords" , "unzip" , "unzip3" , 
                      "userError" , "words" , "writeFile" , "zip" , "zip3" , 
-                     "zipWith" , "zipWith3"]
+                     "zipWith" , "zipWith3", "$"]
 
 
 applicative _ = []
@@ -111,16 +146,12 @@ applicative _ = []
 fooz = [4, 13, 42]
 douz = [4.0, 13.0, 42.0]
 
-mtypes :: SimpleInfo -> [(String, String)]
-mtypes SimpleInfo{types} = map dp types
-mnumbers SimpleInfo{literalNumbers} = map (dp.show) literalNumbers
-mconstructors SimpleInfo{constructors} = map (dp) constructors
-mfunctions SimpleInfo{functions   } = map (dp) functions
+
 
 (<++>) :: a -> b -> a
 (<++>) a b = a
 
-dp :: String -> (String, String)
-dp a = (a, (replace ">" "\\textgreater" . Data.String.Utils.replace "<" "\\textless") a)
 
 fromParse (ParseOk m) = m
+
+
