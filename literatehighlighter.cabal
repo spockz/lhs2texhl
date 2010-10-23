@@ -1,0 +1,23 @@
+Name:               lhs2texhl
+Version:            0.1.0.0
+Cabal-Version:      >= 1.6
+License:            MIT
+Author:             Alessandro Vermeulen
+Maintainer:         Alessandro Vermeulen
+Synopsis:           Literate highlighter preprocessor for lhs2tex 
+Description:        A helper executable for highlighting code with lhs2tex. It
+										parses any haskell file and outputs a format file to be used
+										with lhs2tex. Currently no recursion is supported.
+Build-Type:         Simple
+Stability:          Expirimental
+category:           Development, Language
+Data-files:         README examples/theme1.tex
+License-file:       LICENSE
+
+Executable lhs2texhl
+  Main-Is:          LiterateHighlighter.hs
+  Build-Depends:    base >= 4
+                  , haskell98
+                  , haskell-src-exts >= 1.9.3
+                  , MissingH >= 1.1.0.3
+                  , syb >= 0.2.1

@@ -1,0 +1,48 @@
+  Literate HS to TeX Highlighter Helper
+  =====================================
+  
+  Hi there,
+  
+  This is the very first release of the lhs2tex helper for syntax highlighting.
+  Use it in addition with lhs2tex. Due to a huge demand I make this tool 
+  publicly available. Use it your own risk. I am not responsible for any
+  conveniences or inconveniences caused by using this software.
+  
+  Regards,
+  Alessandro Vermeulen
+  
+  INSTALLING
+  ----------
+  
+  * Download the zip file.
+  * Extract
+  * Go to the directory and run
+    > cabal install
+    
+  * That's all
+  
+  USAGE
+  -----
+  
+  > lhs2texhl INPUTFILE OUTPUTFILE
+  
+  Currently this is the only way to work with the tool.
+  
+  In your .tex files add %include OUTPUFILE to tell lhs2tex to use the generated
+  formatting directives. You'll need to provide the following commands yourself:
+  
+  * \lhsCHkeyword
+  * \lhsCHprelude
+  * \lhsCHtype
+  * \lhsCHlitNumber
+  * \lhsCHconstructor
+  * \lhsCHfunction
+  
+  KNOWN ISSUES
+  ------------
+  
+  * Infix operators may not work that great, or normal functions that are used
+    `infix`.
+  * It doesn't do strings and char highlighting yet.
+  
+  
