@@ -44,5 +44,7 @@
   * Infix operators may not work that great, or normal functions that are used
     `infix`.
   * It doesn't do strings and char highlighting yet.
+  * AGDA isn't supported yet unfortunately.
+  * Errors aren't that informative. :)
   
   
