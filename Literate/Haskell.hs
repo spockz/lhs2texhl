@@ -79,7 +79,8 @@ getSimpleInfo m = simpleinfo{ types          = listTypes m
 
 
 mapping :: [(String, SimpleInfo -> [(String,String)])]
-mapping = [ ("keyword",      keywords)
+mapping = [ ("syntax",       syntax)
+          , ("keyword",      keywords)
           , ("prelude",      prelude)
           , ("applicative",  applicative )
           , ("type",         mtypes) 
@@ -96,6 +97,9 @@ moperators SimpleInfo{operators} = map (\ a -> (a, "\\ "++ makeLatexSafe a++"\\ 
 mnumbers SimpleInfo{literalNumbers} = map dp literalNumbers
 mconstructors SimpleInfo{constructors} = map (dp) constructors
 mfunctions SimpleInfo{functions   } = map (dp) functions
+
+syntax _  = map dp  [ "=", "{", "}", "(", ")", "<-", "->", "=>", ","
+                    ]
 
 keywords _ = map dp [ "data", "deriving", "type", "instance", "family", "where"
                     , "newtype", "if", "then", "else", "case", "of", "module"
@@ -135,7 +139,7 @@ prelude  SimpleInfo{functions   } = map dp $
                      "signum" , "sin" , "sinh" , "snd" , "span" , "splitAt" , 
                      "sqrt" , "subtract" , "succ" , "sum" , "tail" , "take" , 
                      "takeWhile" , "tan" , "tanh" , "toEnum" , "toInteger" , 
-                     "toRational" , "truncate" , "uncurry" , "undefined" , 
+                     "toRational" , "truncate" , "uncurry" , 
                      "unlines" , "until" , "unwords" , "unzip" , "unzip3" , 
                      "userError" , "words" , "writeFile" , "zip" , "zip3" , 
                      "zipWith" , "zipWith3", "$"]

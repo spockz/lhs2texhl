@@ -44,7 +44,12 @@ main = do args <- cmdArgsRun standard
           hClose hOutput
   where printFormat keyword seek rep = "%format " ++ seek ++ " = \" {\\lhsCH" ++ keyword ++ "{" ++ rep ++ "}}\"" 
         writeOutput output si mapping = 
-                      mapM_ (\(keyword, f) -> mapM_ (\ (seek,rep) -> hPutStrLn output $ printFormat keyword seek rep) 
-                                              (f si)) 
-                                              mapping
+                      mapM_  (\(keyword, f) -> mapM_ (\ (seek,rep) -> hPutStrLn output $ printFormat keyword seek rep) 
+                                                     (filter lhs2TeXSafe (f si))
+                             ) 
+                             mapping
+                    
+lhs2TeXSafe :: (String, String) -> Bool
+lhs2TeXSafe ("()" , _)  = False
+lhs2TeXSafe _           = True
 

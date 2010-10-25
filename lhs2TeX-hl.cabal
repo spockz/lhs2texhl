@@ -1,5 +1,5 @@
 Name:               lhs2TeX-hl
-Version:            0.1.0.9
+Version:            0.1.1.0
 Cabal-Version:      >= 1.6
 License:            MIT
 Author:             Alessandro Vermeulen <me@alessandrovermeulen.me>
@@ -22,5 +22,5 @@ Executable lhs2TeX-hl
                   , haskell-src-exts >= 1.9.3
                   , MissingH >= 1.1.0.3
                   , syb >= 0.1.0.1
-                  , Agda >= 2.2.6
                   , cmdargs >= 0.1
+                  , Agda >= 2.2.6
