@@ -24,3 +24,6 @@ Executable lhs2TeX-hl
                   , syb >= 0.1.0.1
                   , cmdargs >= 0.1
                   , Agda >= 2.2.6
+  hs-source-dirs:   src
+  Other-Modules:    Language.LaTeX, Literate.Agda, Literate.Haskell,
+                    Literate.SimpleInfo, Base.Cli, Base.Common
