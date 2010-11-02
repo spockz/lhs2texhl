@@ -27,7 +27,7 @@
   USAGE
   -----
   
-  > lhs2TeX-hl INPUTFILE -o OUTPUTFILE
+  > lhs2TeX-hl -o OUTPUTFILE INPUTFILE
   
   For more details see:
   
@@ -38,20 +38,27 @@
   In your .tex files add %include OUTPUFILE to tell lhs2tex to use the generated
   formatting directives. You'll need to provide the following commands yourself:
   
+  * \lhsCHsyntax
   * \lhsCHkeyword
   * \lhsCHprelude
   * \lhsCHtype
-  * \lhsCHlitNumber
   * \lhsCHconstructor
   * \lhsCHfunction
   * \lhsCHinfixoperator
+  
+  This only generates formatting directives for keywords for you. If you want to
+  change the formatting of characters, strings or literal numbers add the
+  following directives:
+  
+  > %subst char a    	= "\color{char}\text{\tt ''" a "''}"
+  > %subst string a  	= "\color{string}\text{\tt \char34 " a "\char34}"
+  > %subst numeral a =  "\color{numeral}{ " a " }"
   
   KNOWN ISSUES
   ------------
   
   * Infix operators may not work that great, or normal functions that are used
-    `infix`.
-  * It doesn't do literal string and char highlighting yet.
+    `infix`. Sometimes you might get an `ambigious infix operator' error.
   * AGDA isn't supported yet unfortunately.
   * Errors aren't that informative. :)
   

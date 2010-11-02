@@ -27,13 +27,11 @@ runAgda path = do  abpath <- absolute path
                    mod <- parseFile' moduleParser abpath
                    return simpleinfo{ functions = []
                                     , operators = listOperators mod
-                                    , literalNumbers = listLiteralNumbers mod
                                     }
 
 mapping :: [(String, SimpleInfo -> [(String,String)])]
 mapping = [ 
-            ("litNumber",     mnumbers)
-          , ("infixoperator", moperators)
+            ("infixoperator", moperators)
           ]
                                 
 listOperators :: Module -> [String]
@@ -42,13 +40,5 @@ listOperators =  nub . everything (++) ([] `mkQ` listOperator)
         listOperator (OpApp _ n _) = [show n]
         listOperator (_)  = []
         
-listLiteralNumbers :: Module -> [String]
-listLiteralNumbers =  nub . everything (++) ([] `mkQ` listLiteralNumber)
- where  listLiteralNumber :: Literal -> [String]
-        listLiteralNumber (LitInt   _ v) = [show v]
-        listLiteralNumber (LitFloat _ v) = [show v]
-        listLiteralNumber (_)  = []
-        
-mnumbers SimpleInfo{literalNumbers} = map dp literalNumbers
 moperators SimpleInfo{operators} = map (\ a -> (a, "\\ "++ makeLatexSafe a++"\\ ")) 
                                        operators

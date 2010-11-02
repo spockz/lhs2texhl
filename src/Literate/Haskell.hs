@@ -34,19 +34,6 @@ listTypes m = (map prettyPrint (collectTypes m))
     getData (TyCon n) = [n]
     getData _         = []
 
-
-listLitNumbers ::  Module -> [String]
-listLitNumbers =  nub . everything (++) ([] `mkQ` listLitNumber)
- where  listLitNumber :: Literal -> [String]
-        listLitNumber (Char   _) = []
-        listLitNumber (String _) = []
-        listLitNumber (Int v)  = [show v]
-        listLitNumber (Frac v)  = [show v]
-        listLitNumber (PrimInt v)  = [show v]
-        listLitNumber (PrimFloat v)  = [show v]
-        listLitNumber (PrimDouble v)  = [show v]
-        listLitNumber (_)  = []
-
 listConstructors ::  Module -> [String]
 listConstructors =  nub . everything (++) ([] `mkQ` listConstructor)
  where  listConstructor :: ConDecl -> [String]
@@ -70,7 +57,6 @@ listOperators =  nub . everything (++) ([] `mkQ` operatorUse)
 
 
 getSimpleInfo m = simpleinfo{ types          = listTypes m
-                            , literalNumbers = listLitNumbers m
                             , constructors   = listConstructors m
                             , functions      = listFunctions m
                             , operators      = listOperators m
@@ -84,7 +70,6 @@ mapping = [ ("syntax",       syntax)
           , ("prelude",      prelude)
           , ("applicative",  applicative )
           , ("type",         mtypes) 
-          , ("litNumber",    mnumbers)
           , ("constructor",  mconstructors)
           , ("function",  mfunctions)
           , ("infixoperator", moperators)
@@ -94,7 +79,6 @@ mtypes :: SimpleInfo -> [(String, String)]
 mtypes SimpleInfo{types} = map dp types
 moperators SimpleInfo{operators} = map (\ a -> (a, "\\ "++ makeLatexSafe a++"\\ ")) 
                                        operators
-mnumbers SimpleInfo{literalNumbers} = map dp literalNumbers
 mconstructors SimpleInfo{constructors} = map (dp) constructors
 mfunctions SimpleInfo{functions   } = map (dp) functions
 

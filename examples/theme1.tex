@@ -1,17 +1,22 @@
-% usepackage color
-\definecolor{datatype}{RGB}{42,0,217}
-\definecolor{class}{RGB}{197,11,16}
+% use package color
+\definecolor{syntax}{RGB}{0, 0, 0}
+\definecolor{datatype}{RGB}{196, 6, 11}
+\definecolor{class}{RGB}{168,37,39}
 \definecolor{fieldname}{RGB}{0,0,162}
 \definecolor{prelude}{RGB}{64,80,117}
 \definecolor{numeral}{RGB}{0,0,205}
-\definecolor{infixoperator}{RGB}{42,0,217}
-\definecolor{constructor}{RGB}{0,161,0}
-\definecolor{keyword}{RGB}{229,120,0}
+\definecolor{infixoperator}{RGB}{19, 19, 168}
+\definecolor{constructor}{RGB}{196, 6, 11}
+\definecolor{keyword}{RGB}{4, 58, 252}
 \definecolor{special1}{RGB}{159,138,0}
+\definecolor{string}{RGB}{3, 106, 7}
+\definecolor{char}  {RGB}{3, 106, 7}
 
-\newcommand{\lhsCHfunction}[1]{\color{infixoperator}{\mathbf{#1}}}
+\newcommand{\lhsCHsyntax}[1]{\color{syntax}{{#1}}}
+\newcommand{\lhsCHfunction}[1]{\color{infixoperator}{{#1}}}
+\newcommand{\lhsCHinfixoperator}[1]{\color{infixoperator}{{#1}}}
 \newcommand{\lhsCHprelude}[1]{\color{prelude}{\mathbf{#1}}}
 \newcommand{\lhsCHkeyword}[1]{\color{keyword}{\textbf{#1}}}
-\newcommand{\lhsCHconstructor}[1]{\color{constructor}{{#1}}}
+\newcommand{\lhsCHconstructor}[1]{\color{constructor}{\textbf{#1}}}
 \newcommand{\lhsCHlitNumber}[1]{\color{numeral}{{#1}}}
 \newcommand{\lhsCHtype}[1]{\color{datatype}{{#1}}}
