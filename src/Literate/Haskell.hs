@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE NamedFieldPuns #-}
-module Literate.Haskell (runHaskell, mapping) where
+module Literate.Haskell (runHaskell, mapping, listClasses, fromParse) where
 
 import Data.List (nub)
 import Data.Data
@@ -15,7 +15,8 @@ newtype M = M Module deriving (Typeable, Data)
 
 
 runHaskell :: FilePath -> IO SimpleInfo
-runHaskell fp = do mod <- parseFile fp
+runHaskell fp = do mod <- parseFileWithMode (defaultParseMode { fixities = baseFixities } ) 
+                                            fp
                    case mod of
                      (ParseOk m)           -> return $ getSimpleInfo m
                      (ParseFailed loc err) -> error $ 
@@ -55,11 +56,25 @@ listOperators =  nub . everything (++) ([] `mkQ` operatorUse)
         operatorUse (InfixApp _ qop _)  = [prettyPrint qop]
         operatorUse _                   = []
 
+listClasses ::  Module -> [String]
+listClasses =  nub . everything (++) ([] `mkQ` listClassDeriving
+                                         `extQ` listClassDecl
+                                         `extQ` listClassContext)
+ where  listClassDeriving :: Deriving -> [String] 
+        listClassDeriving (name , _)  = [prettyPrint name]
+        listClassDecl :: Decl -> [String]
+        listClassDecl (ClassDecl _ _ name _ _ _) = [prettyPrint name]
+        listClassDecl _ = []
+        listClassContext :: Asst -> [String]
+        listClassContext (ClassA name _) = [prettyPrint name]
+        listClassContext _               = []
+
 
 getSimpleInfo m = simpleinfo{ types          = listTypes m
                             , constructors   = listConstructors m
                             , functions      = listFunctions m
                             , operators      = listOperators m
+                            , classes        = listClasses   m
                             }
 
 
@@ -138,6 +153,9 @@ douz = [4.0, 13.0, 42.0]
 
 (<++>) :: a -> b -> a
 (<++>) a b = a
+
+tid :: Typeable a => a -> a
+tid = id
 
 
 fromParse (ParseOk m) = m

@@ -7,8 +7,9 @@ data SimpleInfo = SimpleInfo {
   constructors    :: [String],
   functions       :: [String],
   operators       :: [String],
-  literalChars    :: [Char],
-  literalStrings  :: [String]
+  classes         :: [String]
+
+  
 } deriving Show
 
 simpleinfo = SimpleInfo{ fileName = ""
@@ -17,6 +18,5 @@ simpleinfo = SimpleInfo{ fileName = ""
                        , constructors = []
                        , functions = []
                        , operators = []
-                       , literalChars   = []
-                       , literalStrings = []
+                       , classes   = []
                        }

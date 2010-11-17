@@ -45,6 +45,7 @@
   * \lhsCHconstructor
   * \lhsCHfunction
   * \lhsCHinfixoperator
+  * \lhsCHclass
   
   This only generates formatting directives for keywords for you. If you want to
   change the formatting of characters, strings or literal numbers add the
@@ -58,8 +59,15 @@
   ------------
   
   * Infix operators may not work that great, or normal functions that are used
-    `infix`. Sometimes you might get an `ambigious infix operator' error.
+    `infix`. Sometimes you might get an `ambiguous infix operator' error.
   * AGDA isn't supported yet unfortunately.
   * Errors aren't that informative. :)
+  
+  CHANGES
+  -------
+  1.2.0:  * Hopefully the ``ambiguous infix operator'' error shouldn't occur 
+            that often anymore.
+          * Removed the AGDA dependency for until it actually works.
+          * Classes are now detected.
   
   

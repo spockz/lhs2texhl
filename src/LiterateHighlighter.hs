@@ -13,7 +13,7 @@ import Language.Haskell.Exts
 import Base.CLI
 import System.Console.CmdArgs
 
-import Literate.Agda
+-- import Literate.Agda
 import Literate.Haskell 
 import Literate.SimpleInfo
 
@@ -26,16 +26,17 @@ main = do args <- cmdArgsRun standard
           hSetEncoding stdout utf8
           hSetEncoding stderr utf8
          
-          hOutput <- openFile  (output args) WriteMode
+          hOutput <- openFile (output args) WriteMode
           hSetEncoding hOutput utf8
 
           let writer = writeOutput hOutput
                            
           if (agda_mode args)
             then
-              mapM_ (\file -> runAgda file
-                     >>= (flip writer) Literate.Agda.mapping)
-                    (input args)
+              error "Agda mode is currently not supported."
+              -- mapM_ (\file -> runAgda file
+              --                      >>= (flip writer) Literate.Agda.mapping)
+              --                     (input args)
             else
               mapM_ (\file -> runHaskell file
                      >>= (flip writer) Literate.Haskell.mapping)

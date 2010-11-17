@@ -1,15 +1,15 @@
 Name:               lhs2TeX-hl
-Version:            0.1.1.1
+Version:            0.1.2.0
 Cabal-Version:      >= 1.6
 License:            MIT
 Author:             Alessandro Vermeulen <me@alessandrovermeulen.me>
 Maintainer:         Alessandro Vermeulen <me@alessandrovermeulen.me>
 Synopsis:           Literate highlighter preprocessor for lhs2tex 
 Description:        A helper executable for highlighting code with lhs2tex. It
-										parses any haskell file and outputs a format file to be used
-										with lhs2tex. Currently no recursion is supported.
+										parses any Haskell file and outputs a format file to be used
+										with lhs2TeX. Currently no recursion is supported.
 Build-Type:         Simple
-Stability:          Expirimental
+Stability:          Experimental
 category:           Development, Language
 Data-files:         README examples/theme1.tex
 License-file:       LICENSE
@@ -23,7 +23,6 @@ Executable lhs2TeX-hl
                   , MissingH >= 1.1.0.3
                   , syb >= 0.1.0.1
                   , cmdargs >= 0.1
-                  , Agda >= 2.2.6
   hs-source-dirs:   src
   Other-Modules:    Language.LaTeX, Literate.Agda, Literate.Haskell,
                     Literate.SimpleInfo, Base.CLI, Base.Common
