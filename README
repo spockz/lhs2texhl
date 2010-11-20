@@ -65,6 +65,8 @@
   
   CHANGES
   -------
+  1.2.1:  * Fixed a regression, detection of language pragmas was apparently
+            broken and now they aren't anymore.
   1.2.0:  * Hopefully the ``ambiguous infix operator'' error shouldn't occur 
             that often anymore.
           * Removed the AGDA dependency for until it actually works.

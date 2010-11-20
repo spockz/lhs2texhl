@@ -3,9 +3,10 @@
 module Literate.Haskell (runHaskell, mapping, listClasses, fromParse) where
 
 import Data.List (nub)
+import Data.Maybe
 import Data.Data
 import Data.Generics
-import Language.Haskell.Exts
+import Language.Haskell.Exts hiding (parseFile)
 
 import Language.LaTeX
 import Literate.SimpleInfo
@@ -13,10 +14,14 @@ import Literate.SimpleInfo
 
 newtype M = M Module deriving (Typeable, Data)
 
+parseFile fp = parseFileWithMode (defaultParseMode { fixities      = baseFixities
+                                                   , parseFilename = fp      
+                                                   } 
+                                 )
+                                 fp
 
 runHaskell :: FilePath -> IO SimpleInfo
-runHaskell fp = do mod <- parseFileWithMode (defaultParseMode { fixities = baseFixities } ) 
-                                            fp
+runHaskell fp = do mod <- parseFile fp
                    case mod of
                      (ParseOk m)           -> return $ getSimpleInfo m
                      (ParseFailed loc err) -> error $ 
