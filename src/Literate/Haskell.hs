@@ -88,11 +88,12 @@ mapping :: [(String, SimpleInfo -> [(String,String)])]
 mapping = [ ("syntax",       syntax)
           , ("keyword",      keywords)
           , ("prelude",      prelude)
-          , ("applicative",  applicative )
+          -- , ("applicative",  applicative )
           , ("type",         mtypes) 
           , ("constructor",  mconstructors)
           , ("function",  mfunctions)
           , ("infixoperator", moperators)
+          , ("class", mclasses)
           ]
           
 mtypes :: SimpleInfo -> [(String, String)]
@@ -101,6 +102,7 @@ moperators SimpleInfo{operators} = map (\ a -> (a, "\\ "++ makeLatexSafe a++"\\ 
                                        operators
 mconstructors SimpleInfo{constructors} = map (dp) constructors
 mfunctions SimpleInfo{functions   } = map (dp) functions
+mclasses SimpleInfo{classes}        = map (dp) classes
 
 syntax _  = map dp  [ "=", "{", "}", "(", ")", "<-", "->", "=>", ","
                     ]
