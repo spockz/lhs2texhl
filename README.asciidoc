@@ -6,14 +6,9 @@ Hi there,
 welcome to the lhs2TeX-hl readme. lhs2TeX-hl is a tool for generating
 formatting rules used by lhs2TeX. This tool is to be used in combination with
 lhs2TeX. 
-Hi there,
 
-This is the very first release of the lhs2tex helper for syntax highlighting.
-Use it in addition with lhs2tex. Due to a huge demand I make this tool 
-publicly available. Use it your own risk. I am not responsible for any
-conveniences or inconveniences caused by using this software.
 
-It aims to detect the `kind' of a token either by it's use or it's
+It aims to detect the `kind' of an identifier either by it's use or it's
 declaration. Trying to detect both local declarations and usages.
 
 Regards,
@@ -23,17 +18,19 @@ INSTALLING
 ----------
 
 * Make sure you have cabal installed and run
-  > cabal install lhs2TeX-hl
+
+  cabal install lhs2TeX-hl
   
 * Or download the latest release from:
     http://hackage.haskell.org/package/lhs2TeX-hl
+  and install in the standard way.
 
 * Or visit the github page:
     https://github.com/spockz/lhs2texhl
 
 USAGE or HOW-TO
 ---------------
-Using lhs2TeX-hl is very simple. Just pass it your haskell source file and it
+Using lhs2TeX-hl is very simple. Just pass it your Haskell source file and it
 will automatically generating formatting directives for you. Including but not
 limited to formatting directives for data constructors and functions. Currently
 `functions' that are strictly constants are not highlighted as functions.
@@ -50,11 +47,16 @@ lhs2TeX-hl --help
 
 Currently this is the only way to work with the tool.
 
-In your .tex files add %include <filename>.lhs to tell lhs2TeX-hl to use the
-generated formatting directives. You'll need to provide the following LaTeX
-commands yourself:
+In your .lhs file include the generated formatting files, like this:
 
-* \lhsCHsyntax
+----
+%include polycode.fmt
+%include <filename>.fmt
+----
+
+After this you'll need to provide the following LaTeX commands yourself:
+
+* \lhsCHsyntax 
 * \lhsCHkeyword
 * \lhsCHprelude
 * \lhsCHtype
@@ -63,7 +65,7 @@ commands yourself:
 * \lhsCHinfixoperator
 * \lhsCHclass
 
-Check out the ./examples directory for example themes.
+Check out the ./examples directory and the examples section for example themes.
 
 This tool only generates formatting directives for identifiers (including
 operators) for you. If you want to change the formatting of characters,
@@ -76,6 +78,41 @@ strings or literal numbers add the following directives:
 ----
 
 For other available substitutions consult the lhs2TeX manual.
+
+THEMES
+------
+
+emacs
+~~~~~
+[source, latex]
+--------------------------------------------------------------------------------
+% use package color
+\definecolor{syntax}{RGB}{0, 0, 0}
+\definecolor{datatype}{RGB}{196, 6, 11}
+\definecolor{class}{RGB}{168,37,39}
+\definecolor{fieldname}{RGB}{0,0,162}
+\definecolor{prelude}{RGB}{64,80,117}
+\definecolor{numeral}{RGB}{0,0,205}
+\definecolor{infixoperator}{RGB}{19, 19, 168}
+\definecolor{constructor}{RGB}{196, 6, 11}
+\definecolor{keyword}{RGB}{4, 58, 252}
+\definecolor{special1}{RGB}{159,138,0}
+\definecolor{string}{RGB}{3, 106, 7}
+\definecolor{char}  {RGB}{3, 106, 7}
+
+\newcommand{\lhsCHsyntax}[1]{\color{syntax}{{#1}}}
+\newcommand{\lhsCHfunction}[1]{\color{infixoperator}{{#1}}}
+\newcommand{\lhsCHinfixoperator}[1]{\color{infixoperator}{{#1}}}
+\newcommand{\lhsCHprelude}[1]{\color{prelude}{\mathbf{#1}}}
+\newcommand{\lhsCHkeyword}[1]{\color{keyword}{\textbf{#1}}}
+\newcommand{\lhsCHconstructor}[1]{\color{constructor}{\textbf{#1}}}
+\newcommand{\lhsCHtype}[1]{\color{datatype}{{#1}}}
+\newcommand{\lhsCHclass}[1]{\color{class}{{#1}}}
+
+%subst char a    = "\color{char}\text{\tt ''" a "''}"
+%subst string a  = "\color{string}\text{\tt \char34 " a "\char34}"
+%subst numeral a = "\color{numeral}{ " a " }"
+--------------------------------------------------------------------------------
 
 KNOWN ISSUES
 ------------
