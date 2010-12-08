@@ -41,11 +41,19 @@ listTypes m = (map prettyPrint (collectTypes m))
     getData _         = []
 
 listConstructors ::  Module -> [String]
-listConstructors =  nub . everything (++) ([] `mkQ` listConstructor)
+listConstructors =  nub . everything (++) ([] `mkQ`  listConstructor 
+                                              `extQ` listConstructorPat 
+                                              `extQ` listConstructorUse)
  where  listConstructor :: ConDecl -> [String]
         listConstructor (ConDecl (i) _)      = [prettyPrint i]
         listConstructor (InfixConDecl _ i _) = [prettyPrint i]
         listConstructor (RecDecl i _)        = [prettyPrint i]
+        listConstructorPat :: Pat -> [String]
+        listConstructorPat (PApp i _)        = [prettyPrint i]
+        listConstructorPat _                 = []
+        listConstructorUse :: Exp -> [String]
+        listConstructorUse (Con i)           = [prettyPrint i]
+        listConstructorUse _                 = []
 
 listFunctions ::  Module -> [String]
 listFunctions =  nub . everything (++) ([] `mkQ` functionBinding `extQ` functionUse)

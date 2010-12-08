@@ -17,6 +17,8 @@ import System.Console.CmdArgs
 import Literate.Haskell 
 import Literate.SimpleInfo
 
+
+import Language.Markup
 -----------------------------
 
 

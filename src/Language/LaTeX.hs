@@ -1,11 +1,17 @@
 module Language.LaTeX where
 
+
+---------
 import Data.String.Utils
+
+import Language.Markup
+---------
+
 
 makeLatexSafe :: String -> String
 makeLatexSafe = replace ">" "\\textgreater" 
               . replace "<" "\\textless"
-              . replace "_" "\\_"
+              -- . replace "_" "\\_"
               . replace "\"" "\\\""
               
               . replace "&" "\\&"
@@ -13,7 +19,7 @@ makeLatexSafe = replace ">" "\\textgreater"
 
 {- This part is to conserve some lhs2TeX behaviour. Really shouldn't be here... -}
               . replace "=" "\\ = \\ "
-              . replace "_" "\\ \\anonymous\\ "
+              -- . replace "_" "\\ \\anonymous\\ "
               . replace "$" "\\ \\mathbin{\\$}\\ "
               . replace "&&" "\\ \\mathrel{\\wedge}\\ "
               . replace "||" "\\ \\mathrel{\\vee}\\ "
@@ -48,4 +54,4 @@ char :: Integer -> String
 char n = "\\ \\char''" ++ show n ++"\\ "
               
 dp :: String -> (String, String)
-dp a = (a, makeLatexSafe a)
+dp a = (a, (markup . makeLatexSafe) a)
