@@ -29,5 +29,5 @@ Executable lhs2TeX-hl
                   , cmdargs >= 0.1
                   , MissingH
   hs-source-dirs:   src
-  Other-Modules:    Language.LaTeX, Literate.Agda, Literate.Haskell,
+  Other-Modules:    Language.LaTeX, Language.Markup, Literate.Agda, Literate.Haskell,
                     Literate.SimpleInfo, Base.CLI, Base.Common
