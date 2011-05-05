@@ -1,5 +1,5 @@
 Name:               lhs2TeX-hl
-Version:            0.1.3
+Version:            0.1.3.2
 Cabal-Version:      >= 1.6
 License:            MIT
 Author:             Alessandro Vermeulen <me@alessandrovermeulen.me>
@@ -24,10 +24,10 @@ Executable lhs2TeX-hl
   Main-Is:          LiterateHighlighter.hs
   Build-Depends:    base >= 4 && <= 5
                   , haskell98
-                  , haskell-src-exts >= 1.9.3
+                  , haskell-src-exts >= 1.10.2
                   , syb >= 0.1.0.1
                   , cmdargs >= 0.1
-                  , MissingH
   hs-source-dirs:   src
-  Other-Modules:    Language.LaTeX, Language.Markup, Literate.Agda, Literate.Haskell,
+  Other-Modules:    Data.List.Utils, Data.String.Utils, Language.LaTeX, 
+                    Language.Markup, Literate.Agda, Literate.Haskell,
                     Literate.SimpleInfo, Base.CLI, Base.Common

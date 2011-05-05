@@ -2,7 +2,7 @@ module Language.LaTeX where
 
 
 ---------
-import Data.String.Utils
+import Data.List.Utils ( replace )
 
 import Language.Markup
 ---------

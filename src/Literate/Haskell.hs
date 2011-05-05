@@ -39,6 +39,12 @@ listTypes m = (map prettyPrint (collectTypes m))
     getData :: Type -> [QName]
     getData (TyCon n) = [n]
     getData _         = []
+    -- getType :: Decl -> [QName]
+    -- getType (DataDecl _ _ _ _ decl _ _)  = let  f (Ident n)  = [n]
+    --                                             f _          = []
+    --                                        in   f decl
+    --   
+    -- getType _                        = []
 
 listConstructors ::  Module -> [String]
 listConstructors =  nub . everything (++) ([] `mkQ`  listConstructor 
@@ -56,12 +62,23 @@ listConstructors =  nub . everything (++) ([] `mkQ`  listConstructor
         listConstructorUse _                 = []
 
 listFunctions ::  Module -> [String]
-listFunctions =  nub . everything (++) ([] `mkQ` functionBinding `extQ` functionUse)
+listFunctions =  nub . everything (++) ([] `mkQ` functionBinding 
+                                           `extQ` functionUse 
+                                           `extQ` functionTypeSig)
  where  functionBinding :: Match -> [String]
         functionBinding (Match _ (i) _ _ _ _)  = [prettyPrint i]
         functionUse :: Exp -> [String] 
         functionUse (App (Var qname) _) = [prettyPrint qname]
         functionUse _                   = []
+        functionTypeSig :: Decl -> [String]
+        functionTypeSig (TypeSig _ names t)  = case t of
+                                                 TyParen (TyFun _ _)  -> map nameToString names
+                                                 TyFun   _    _       -> map nameToString names
+                                                 _                    -> []
+        functionTypeSig _                    = []
+        nameToString :: Name -> String
+        nameToString (Ident s) = s
+        nameToString (Symbol s) = s
         
 listOperators ::  Module -> [String]
 listOperators =  nub . everything (++) ([] `mkQ` operatorUse)
