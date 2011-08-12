@@ -24,7 +24,7 @@ Executable lhs2TeX-hl
   Main-Is:          LiterateHighlighter.hs
   Build-Depends:    base >= 4 && <= 5
                   , haskell98
-                  , haskell-src-exts >= 1.10.2
+                  , haskell-src-exts == 1.11.1
                   , syb >= 0.1.0.1
                   , cmdargs >= 0.1
   hs-source-dirs:   src

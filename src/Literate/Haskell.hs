@@ -14,7 +14,7 @@ import Literate.SimpleInfo
 
 newtype M = M Module deriving (Typeable, Data)
 
-parseFile fp = parseFileWithMode (defaultParseMode { fixities      = baseFixities
+parseFile fp = parseFileWithMode (defaultParseMode { fixities      = Just baseFixities
                                                    , parseFilename = fp      
                                                    } 
                                  )
