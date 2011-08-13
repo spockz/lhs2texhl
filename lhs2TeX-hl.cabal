@@ -1,5 +1,5 @@
 Name:               lhs2TeX-hl
-Version:            0.1.3.2
+Version:            0.1.3.3
 Cabal-Version:      >= 1.6
 License:            MIT
 Author:             Alessandro Vermeulen <me@alessandrovermeulen.me>
@@ -19,6 +19,9 @@ Data-files:         README.asciidoc examples/theme1.tex
 License-file:       LICENSE
 Homepage:           http://spockz.github.com/lhs2texhl/
 bug-reports:        http://github.com/spockz/lhs2texhl/issues
+source-repository head
+  type:             git
+  location:         https://github.com/spockz/lhs2texhl
 
 Executable lhs2TeX-hl
   Main-Is:          LiterateHighlighter.hs
