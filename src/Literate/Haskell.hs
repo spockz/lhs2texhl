@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE NamedFieldPuns #-}
-module Literate.Haskell (runHaskell, mapping, listClasses, fromParse) where
+{-# LANGUAGE RankNTypes #-}
+module Literate.Haskell (runHaskell, mapping, fromParse) where
 
 import Data.List (nub)
 import Data.Maybe
@@ -13,6 +14,13 @@ import Literate.SimpleInfo
  
 
 newtype M = M Module deriving (Typeable, Data)
+
+type ItemQuery a = a -> [Item]
+
+newtype ConstructorSearch = ConstructorSearch Module deriving (Typeable, Show)
+newtype FunctionSearch    = FunctionSearch    Module deriving (Typeable, Show)
+newtype OperatorSearch    = OperatorSearch    Module deriving (Typeable, Show)
+newtype ClassSearch       = ClassSearch       Module deriving (Typeable, Show)
 
 parseFile fp = parseFileWithMode (defaultParseMode { fixities      = Just baseFixities
                                                    , parseFilename = fp      
@@ -28,93 +36,89 @@ runHaskell fp = do mod <- parseFile fp
                                                 "Parsing failed at `" 
                                                 ++ show loc
                                                 ++ " " ++ err
+                                                
+
+collect :: Module -> [Item]
+collect   = nub . everything (++) ([] `mkQ`  searchTypes
+                                      `extQ` searchConDecl
+                                      `extQ` searchPat
+                                      `extQ` searchExp
+                                      `extQ` searchMat
+                                      `extQ` searchDecl
+                                      `extQ` searchDeriving
+                                      `extQ` searchAsst)
+  
 
 
 {- SYB Queries -}
-listTypes :: Module -> [String]
-listTypes m = (map prettyPrint (collectTypes m))
-              where
-  collectTypes :: Module -> [QName]
-  collectTypes = nub . everything (++) ([] `mkQ` getData) where
-    getData :: Type -> [QName]
-    getData (TyCon n) = [n]
-    getData _         = []
-    -- getType :: Decl -> [QName]
-    -- getType (DataDecl _ _ _ _ decl _ _)  = let  f (Ident n)  = [n]
-    --                                             f _          = []
-    --                                        in   f decl
-    --   
-    -- getType _                        = []
+searchTypes :: ItemQuery Type
+searchTypes (TyCon n) = [Type (prettyPrint n)]
+searchTypes _         = []
 
-listConstructors ::  Module -> [String]
-listConstructors =  nub . everything (++) ([] `mkQ`  listConstructor 
-                                              `extQ` listConstructorPat 
-                                              `extQ` listConstructorUse)
- where  listConstructor :: ConDecl -> [String]
-        listConstructor (ConDecl (i) _)      = [prettyPrint i]
-        listConstructor (InfixConDecl _ i _) = [prettyPrint i]
-        listConstructor (RecDecl i _)        = [prettyPrint i]
-        listConstructorPat :: Pat -> [String]
-        listConstructorPat (PApp i _)        = [prettyPrint i]
-        listConstructorPat _                 = []
-        listConstructorUse :: Exp -> [String]
-        listConstructorUse (Con i)           = [prettyPrint i]
-        listConstructorUse _                 = []
+searchConDecl :: ItemQuery ConDecl
+searchConDecl (ConDecl (i) _)      = [Constructor $ prettyPrint i]
+searchConDecl (InfixConDecl _ i _) = [Constructor $ prettyPrint i]
+searchConDecl (RecDecl i _)        = [Constructor $ prettyPrint i]
 
-listFunctions ::  Module -> [String]
-listFunctions =  nub . everything (++) ([] `mkQ` functionBinding 
-                                           `extQ` functionUse 
-                                           `extQ` functionTypeSig)
- where  functionBinding :: Match -> [String]
-        functionBinding (Match _ (i) _ _ _ _)  = [prettyPrint i]
-        functionUse :: Exp -> [String] 
-        functionUse (App (Var qname) _) = [prettyPrint qname]
-        functionUse _                   = []
-        functionTypeSig :: Decl -> [String]
-        functionTypeSig (TypeSig _ names t)  = case t of
-                                                 TyParen (TyFun _ _)  -> map nameToString names
-                                                 TyFun   _    _       -> map nameToString names
-                                                 _                    -> []
-        functionTypeSig _                    = []
-        nameToString :: Name -> String
-        nameToString (Ident s) = s
-        nameToString (Symbol s) = s
+searchPat :: ItemQuery Pat
+searchPat (PApp i _)        = [Constructor $ prettyPrint i]
+searchPat _                 = []
+
+searchExp :: ItemQuery Exp
+searchExp (Con i)             = [Constructor $ prettyPrint i]
+searchExp (App (Var qname) _) = [Function $ prettyPrint qname]
+searchExp (InfixApp _ qop _)  = [Operator $ prettyPrint qop]
+searchExp _                   = []
+
+searchMat :: ItemQuery Match
+searchMat (Match _ (i) _ _ _ _)  = [Function $ prettyPrint i]
+
+searchDecl :: ItemQuery Decl
+searchDecl (TypeSig _ names t)  = case t of
+                                    TyParen (TyFun _ _)  -> map nameToString names
+                                    TyFun   _    _       -> map nameToString names
+                                    _                    -> []
+  where  nameToString :: Name -> Item
+         nameToString (Ident s)  = Function s
+         nameToString (Symbol s) = Function s
+searchDecl (ClassDecl _ _ name _ _ _) = [Class $ prettyPrint name]
+searchDecl _ = []
+
         
-listOperators ::  Module -> [String]
-listOperators =  nub . everything (++) ([] `mkQ` operatorUse)
- where  operatorUse :: Exp -> [String] 
-        operatorUse (InfixApp _ qop _)  = [prettyPrint qop]
-        operatorUse _                   = []
-
-listClasses ::  Module -> [String]
-listClasses =  nub . everything (++) ([] `mkQ` listClassDeriving
-                                         `extQ` listClassDecl
-                                         `extQ` listClassContext)
- where  listClassDeriving :: Deriving -> [String] 
-        listClassDeriving (name , _)  = [prettyPrint name]
-        listClassDecl :: Decl -> [String]
-        listClassDecl (ClassDecl _ _ name _ _ _) = [prettyPrint name]
-        listClassDecl _ = []
-        listClassContext :: Asst -> [String]
-        listClassContext (ClassA name _) = [prettyPrint name]
-        listClassContext _               = []
 
 
-getSimpleInfo m = simpleinfo{ types          = listTypes m
-                            , constructors   = listConstructors m
-                            , functions      = listFunctions m
-                            , operators      = listOperators m
-                            , classes        = listClasses   m
+searchDeriving :: ItemQuery Deriving
+searchDeriving (name , _)  = [Class $ prettyPrint name]
+
+searchAsst :: ItemQuery Asst
+searchAsst (ClassA name _) = [Class $ prettyPrint name]
+searchAsst _               = []
+
+
+getSimpleInfo m = simpleinfo{ types          = f isT
+                            , constructors   = f isCo
+                            , functions      = f isF
+                            , operators      = f isO
+                            , classes        = f isCl
                             }
+  where f p = map show (filter p collection)
+        isT  (Type _) = True
+        isT  _        = False
+        isCo (Constructor _) = True
+        isCo _               = False
+        isF  (Function _)    = True
+        isF  _               = False
+        isO  (Operator _)    = True
+        isO  _               = False
+        isCl (Class _)       = True
+        isCl _               = False
+        collection = collect m
 
 
 
 mapping :: [(String, SimpleInfo -> [(String,String)])]
-mapping = [ ("syntax",       syntax)
-          , ("keyword",      keywords)
-          , ("prelude",      prelude)
-          -- , ("applicative",  applicative )
-          , ("type",         mtypes) 
+mapping = [ 
+            ("type",         mtypes) 
           , ("constructor",  mconstructors)
           , ("function",  mfunctions)
           , ("infixoperator", moperators)
@@ -129,54 +133,7 @@ mconstructors SimpleInfo{constructors} = map (dp) constructors
 mfunctions SimpleInfo{functions   } = map (dp) functions
 mclasses SimpleInfo{classes}        = map (dp) classes
 
-syntax _  = map dp  [ "=", "{", "}", "(", ")", "<-", "->", "=>", ","
-                    ]
 
-keywords _ = map dp [ "data", "deriving", "type", "instance", "family", "where"
-                    , "newtype", "if", "then", "else", "case", "of", "module"
-                    , "as", "hiding", "import", "let", "in", "do", "class"]
-
-prelude  SimpleInfo{functions   } = map dp $
-                    filter ((flip elem) functions)
-                    ["abs" , "acos" , "acosh" , "all" , "and" , "any" , 
-                     "appendFile" , "applyM" , "asTypeOf" , "asin" , "asinh" , 
-                     "atan" , "atan2" , "atanh" , "break" , "catch" , "ceiling",
-                     "compare" , "concat" , "concatMap" , "const" , "cos" , 
-                     "cosh" , "curry" , "cycle" , "decodeFloat" , "div" , 
-                     "divMod" , "drop" , "dropWhile" , "elem" , "encodeFloat" , 
-                     "enumFrom" , "enumFromThen" , "enumFromThenTo" , 
-                     "enumFromTo" , "error" , "even" , "exp" , "exponent" , 
-                     "fail" , "filter" , "flip" , "floatDigits" , "floatRadix" , 
-                     "floatRange" , "floor" , "fmap" , "foldl" , "foldl1" , 
-                     "foldr" , "foldr1" , "fromEnum" , "fromInteger" , 
-                     "fromIntegral" , "fromRational" , "fst" , "gcd" , 
-                     "getChar" , "getContents" , "getLine" , "head" , "id" , 
-                     "init" , "interact" , "ioError" , "isDenormalized" , 
-                     "isIEEE" , "isInfinite" , "isNaN" , "isNegativeZero" , 
-                     "iterate" , "last" , "lcm" , "length" , "lex" , "lines" , 
-                     "log" , "logBase" , "lookup" , "map" , "mapM" , "mapM_" , 
-                     "max" , "maxBound" , "maximum" , "maybe" , "min" , 
-                     "minBound" , "minimum" , "mod" , "negate" , "not" , 
-                     "notElem" , "null" , "odd" , "or" , "otherwise" , "pi" , 
-                     "pred" , "print" , "product" , "properFraction" , 
-                     "putChar" , "putStr" , "putStrLn" , "quot" , "quotRem" , 
-                     "read" , "readFile" , "readIO" , "readList" , "readLn" , 
-                     "readParen" , "reads" , "readsPrec" , "realToFrac" , 
-                     "recip" , "rem" , "repeat" , "replicate" , "return" , 
-                     "reverse" , "round" , "scaleFloat" , "scanl" , "scanl1" , 
-                     "scanr" , "scanr1" , "seq" , "sequence" , "sequence_" , 
-                     "show" , "showChar" , "showList" , "showParen" , 
-                     "showString" , "shows" , "showsPrec" , "significand" , 
-                     "signum" , "sin" , "sinh" , "snd" , "span" , "splitAt" , 
-                     "sqrt" , "subtract" , "succ" , "sum" , "tail" , "take" , 
-                     "takeWhile" , "tan" , "tanh" , "toEnum" , "toInteger" , 
-                     "toRational" , "truncate" , "uncurry" , 
-                     "unlines" , "until" , "unwords" , "unzip" , "unzip3" , 
-                     "userError" , "words" , "writeFile" , "zip" , "zip3" , 
-                     "zipWith" , "zipWith3", "$"]
-
-
-applicative _ = []
 
 fooz = [4, 13, 42]
 douz = [4.0, 13.0, 42.0]

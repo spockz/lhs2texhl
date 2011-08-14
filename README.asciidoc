@@ -85,18 +85,33 @@ For your convenience there are some automatic rewrites being done.
 
 * If a identifier names in a sequence of digits, the digits will be
   typeset in subscript.
-* If you have trailing underscores they will be omitted in the typesetting.
-  This is so you can do something like:
-
-  -----
-    data Foo = Foo_ a;
-  -----
-  
+* If you have trailing underscores they will be omitted in the typesetting. This
+  is so you can do something like in <<Automatic_underscore_removal, Automatic
+  removal of trailing underscores>>.  
   And have Foo highlighted as a type constructor, and Foo_ highlighted as
   `Foo' in a data constructor colour. 
   
-* If there are underscores in the middle of your identifier, everything
-  after the underscores will be typeset in subscript.
+* If there are underscores in the middle of your identifier, everything after
+  the underscores will be typeset in subscript as in
+  <<Automatic_subscript_generation, Automatic subscript generation>>.
+  
+.Automatic removal of trailing underscores
+[[Automatic_underscore_removal]]
+[source,haskell]
+-----
+data Foo = Foo_ a;
+-----
+
+.Automatic subscript generation
+[[Automatic_subscript_generation]]
+[source,haskell]
+----
+foo_1 = undefined
+-- Get's transformed into
+foo₁ = undefined
+----
+
+
 
 THEMES
 ------

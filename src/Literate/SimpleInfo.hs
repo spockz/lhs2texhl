@@ -20,3 +20,4 @@ simpleinfo = SimpleInfo{ fileName = ""
                        , operators = []
                        , classes   = []
                        }
+                       
