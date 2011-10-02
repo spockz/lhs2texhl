@@ -1,0 +1,29 @@
+\definecolor{syntax}{RGB}{116, 139, 0}
+\definecolor{datatype}{RGB}{210, 75, 22}
+\definecolor{class}{RGB}{88, 110, 117}
+\definecolor{fieldname}{RGB}{0, 0, 162}
+\definecolor{prelude}{RGB}{64, 80, 117}
+\definecolor{numeral}{RGB}{0, 0, 205}
+\definecolor{infixoperator}{RGB}{38, 139, 210}
+\definecolor{function}{RGB}{38, 139, 210}
+\definecolor{constructor}{RGB}{210, 75, 22}
+\definecolor{keyword}{RGB}{116, 139, 0}
+\definecolor{special1}{RGB}{159, 138, 0}
+\definecolor{string}{RGB}{3, 106, 7}
+\definecolor{char}{RGB}{3, 106, 7}
+\definecolor{constant}{RGB}{38, 139, 210}
+
+\newcommand{\lhsCHsyntax}[1]{\color{syntax}{#1}}
+\newcommand{\lhsCHfunction}[1]{\color{function}{#1}}
+\newcommand{\lhsCHinfixoperator}[1]{\color{infixoperator}{#1}}
+\newcommand{\lhsCHprelude}[1]{\color{prelude}{#1}}
+\newcommand{\lhsCHkeyword}[1]{\color{keyword}{#1}}
+\newcommand{\lhsCHconstructor}[1]{\color{constructor}{#1}}
+\newcommand{\lhsCHtype}[1]{\color{datatype}{#1}}
+\newcommand{\lhsCHclass}[1]{\color{class}{#1}}
+\newcommand{\lhsCHconstant}[1]{\color{constant}{#1}}
+
+%subst char a    = "\color{char}\text{\tt ''" a "''}"
+%subst string a  = "\color{string}\text{\tt \char34 " a "\char34}"
+%subst numeral a = "\color{numeral}{ " a " }"
+
