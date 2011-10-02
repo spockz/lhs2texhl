@@ -5,6 +5,7 @@ data Item = Constructor String
           | Function    String
           | Operator    String
           | Class       String
+          | Constant    String
   deriving (Eq, Ord)
   
 instance Show Item where
@@ -13,3 +14,4 @@ instance Show Item where
   show (Function s)    = s
   show (Operator s)    = s
   show (Class s)       = s
+  show (Constant s)    = s

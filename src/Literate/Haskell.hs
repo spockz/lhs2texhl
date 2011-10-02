@@ -62,7 +62,6 @@ searchConDecl (RecDecl i _)        = [Constructor $ prettyPrint i]
 
 searchPat :: ItemQuery Pat
 searchPat (PApp i _)        = [Constructor $ prettyPrint i]
-searchPat (PVar i)          = [Function $ prettyPrint i]
 searchPat _                 = []
 
 searchExp :: ItemQuery Exp
@@ -76,12 +75,23 @@ searchMat (Match _ (i) _ _ _ _)  = [Function $ prettyPrint i]
 
 searchDecl :: ItemQuery Decl
 searchDecl (TypeSig _ names t)  = case t of
-                                    TyParen (TyFun _ _)  -> map nameToString names
-                                    TyFun   _    _       -> map nameToString names
-                                    _                    -> []
-  where  nameToString :: Name -> Item
-         nameToString (Ident s)  = Function s
-         nameToString (Symbol s) = Function s
+                                    TyParen (TyFun _ _)  -> namesToFunction names
+                                    TyFun   _    _       -> namesToFunction names
+                                    TyForall _ _  t     -> case t of 
+                                                             TyParen (TyFun _ _) -> namesToFunction names
+                                                             TyFun _ _           -> namesToFunction names
+                                                             _                   -> namesToConstant names
+                                    _                    -> namesToConstant names
+  where  nameToString :: (String -> Item) -> Name -> Item
+         nameToString f (Ident s)  = f s
+         nameToString f (Symbol s) = f s
+         namesToFunction = map (nameToString Function)
+         namesToConstant = map (nameToString Constant) 
+         
+         
+         
+         
+         
 searchDecl (ClassDecl _ _ name _ _ _) = [Class $ prettyPrint name]
 searchDecl _ = []
 
@@ -101,6 +111,7 @@ getSimpleInfo m = simpleinfo{ types          = f isT
                             , functions      = f isF
                             , operators      = f isO
                             , classes        = f isCl
+                            , constants      = f isConst
                             }
   where f p = map show (filter p collection)
         isT  (Type _) = True
@@ -113,6 +124,8 @@ getSimpleInfo m = simpleinfo{ types          = f isT
         isO  _               = False
         isCl (Class _)       = True
         isCl _               = False
+        isConst (Constant _) = True
+        isConst _            = False
         collection = collect m
 
 
@@ -124,6 +137,7 @@ mapping = [
           , ("function",  mfunctions)
           , ("infixoperator", moperators)
           , ("class", mclasses)
+          , ("constant", mconstants)
           ]
           
 mtypes :: SimpleInfo -> [(String, String)]
@@ -133,6 +147,7 @@ moperators SimpleInfo{operators} = map (\ a -> (a, "\\ "++ makeLatexSafe a++"\\ 
 mconstructors SimpleInfo{constructors} = map (dp) constructors
 mfunctions SimpleInfo{functions   } = map (dp) functions
 mclasses SimpleInfo{classes}        = map (dp) classes
+mconstants SimpleInfo{constants}    = map (dp) constants
 
 
 
