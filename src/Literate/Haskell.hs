@@ -62,6 +62,7 @@ searchConDecl (RecDecl i _)        = [Constructor $ prettyPrint i]
 
 searchPat :: ItemQuery Pat
 searchPat (PApp i _)        = [Constructor $ prettyPrint i]
+searchPat (PVar i)          = [Function $ prettyPrint i]
 searchPat _                 = []
 
 searchExp :: ItemQuery Exp
