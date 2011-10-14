@@ -2,7 +2,7 @@ module Main where
 
 import Data.List
 
-import System( getArgs )
+import System.Environment( getArgs )
 import System.IO
 
 
