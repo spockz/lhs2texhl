@@ -1,5 +1,5 @@
 Name:               lhs2TeX-hl
-Version:            0.1.4.3
+Version:            0.1.4.4
 Cabal-Version:      >= 1.6
 License:            MIT
 Author:             Alessandro Vermeulen <me@alessandrovermeulen.me>
@@ -30,6 +30,6 @@ Executable lhs2TeX-hl
                   , syb >= 0.1.0.1
                   , cmdargs >= 0.1
   hs-source-dirs:   src
-  Other-Modules:    Data.List.Utils, Data.String.Utils, Language.LaTeX, 
-                    Language.Markup, Literate.Agda, Literate.Haskell,
-                    Literate.SimpleInfo, Base.CLI, Base.Common
+  Other-Modules:    Data.Data, Data.List.Utils, Data.String.Utils, 
+                    Language.LaTeX, Language.Markup, Literate.Agda,
+                    Literate.Haskell, Literate.SimpleInfo, Base.CLI, Base.Common
