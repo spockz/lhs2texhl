@@ -13,7 +13,6 @@ import Language.Haskell.Exts
 import Base.CLI
 import System.Console.CmdArgs
 
--- import Literate.Agda
 import Literate.Haskell 
 import Literate.SimpleInfo
 
