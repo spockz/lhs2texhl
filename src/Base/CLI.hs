@@ -38,7 +38,7 @@ newCommands = unlines [
     "\\newcommand{\\lhsCHtype}[1]{\\color{datatype}{{#1}}}",
     "\\newcommand{\\lhsCHsyntax}[1]{\\color{syntax}{{#1}}}",
     "\\newcommand{\\lhsCHclass}[1]{\\color{class}{{#1}}}",
-    "\\newcommand{\\lhsCHconstant}[1]{\\color{prelude}{{#1}}}"
+    "\\newcommand{\\lhsCHconstant}[1]{\\color{constant}{{#1}}}"
   ]
 
 -- | Standard command line options. 

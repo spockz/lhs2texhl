@@ -158,6 +158,8 @@ KNOWN ISSUES
 
 CHANGES
 -------
+0.1.4.2::
+  * Removed trace statement
 0.1.4.1::
   * Fixed ambiguous import error on GHC 7.2
   * You can now ask for a list of commands to import.

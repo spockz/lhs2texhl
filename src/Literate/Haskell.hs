@@ -11,8 +11,6 @@ import Language.Haskell.Exts hiding (parseFile)
 
 import Language.LaTeX
 import Literate.SimpleInfo
-
-import Debug.Trace (trace)
  
 
 newtype M = M Module deriving (Typeable, Data)
@@ -144,7 +142,7 @@ mapping = [
           
 mtypes :: SimpleInfo -> [(String, String)]
 mtypes SimpleInfo{types} = map dp types
-moperators SimpleInfo{operators} = trace "Operators:\n" $ trace (show operators) $ map (\ a -> (a, "\\ \\mathbin{"++ makeLatexSafe a++"}\\ ")) 
+moperators SimpleInfo{operators} = map (\ a -> (a, "\\ \\mathbin{"++ makeLatexSafe a++"}\\ ")) 
                                        operators
 mconstructors SimpleInfo{constructors} = map (dp) constructors
 mfunctions SimpleInfo{functions   } = map (dp) functions
