@@ -34,7 +34,6 @@ newCommands = unlines [
     "\\newcommand{\\lhsCHprelude}[1]{\\color{prelude}{{#1}}}",
     "\\newcommand{\\lhsCHkeyword}[1]{\\color{keyword}{{#1}}}",
     "\\newcommand{\\lhsCHconstructor}[1]{\\color{constructor}{{#1}}}",
-    "\\newcommand{\\lhsCHlitNumber}[1]{\\color{numeral}{{#1}}}",
     "\\newcommand{\\lhsCHtype}[1]{\\color{datatype}{{#1}}}",
     "\\newcommand{\\lhsCHsyntax}[1]{\\color{syntax}{{#1}}}",
     "\\newcommand{\\lhsCHclass}[1]{\\color{class}{{#1}}}",

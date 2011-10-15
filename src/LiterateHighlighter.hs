@@ -43,22 +43,26 @@ main = do args <- cmdArgsRun standard
                               else 
                                 printFormatting args
 
-  where printFormat keyword seek rep = "%format " ++ seek ++ " = \" {\\lhsCH" ++ keyword ++ "{" ++ rep ++ "}}\"" 
+  where printFormat keyword (seek, rep) = "%format " ++ seek ++ " = \" {\\lhsCH" ++ keyword ++ "{" ++ rep ++ "}}\"" 
         writeOutput output si mapping = 
-                      mapM_  (\(keyword, f) -> mapM_ (\ (seek,rep) -> hPutStrLn output $ printFormat keyword seek rep) 
+                      mapM_  (\(keyword, f) -> mapM_ (hPutStrLn output . printFormat keyword) 
                                                      (filter lhs2TeXSafe (f si))
                              ) 
                              mapping
-        printFormatting args = do  hOutput <- openFile (output args) WriteMode
-                                   let writer = writeOutput hOutput
-                                   hSetEncoding hOutput utf8
-                                   mapM_ (\file -> runHaskell file
-                                          >>= flip writer Literate.Haskell.mapping)
-                                         (input args)
+        printFormatting args = do  hOutput <- openUTF8File (output args)
+                                   let writer = flip $ writeOutput hOutput
+                                   files  <- fmap (nub . concat)
+                                                  (mapM discoverFiles (input args))
+
+                                   mapM_ ((writer Literate.Haskell.mapping =<<) . runHaskell)
+                                         files
                                    hClose hOutput
         goUTF8 = do hSetEncoding stdin  utf8
                     hSetEncoding stdout utf8
-                    hSetEncoding stderr utf8                                   
+                    hSetEncoding stderr utf8
+        openUTF8File fp = do hOutput <- openFile fp WriteMode
+                             hSetEncoding hOutput utf8
+                             return hOutput
 
 discoverFiles :: FilePath -> IO [FilePath]
 discoverFiles fp = do contents  <- fmap (\xs -> [base ++ x | Just x <- map runPInclude (lines xs)])
@@ -68,7 +72,7 @@ discoverFiles fp = do contents  <- fmap (\xs -> [base ++ x | Just x <- map runPI
   where files = undefined
         base = takeDirectory fp ++ "/"
 
-  
+runPInclude :: String -> Maybe String
 runPInclude xs@('%':_) = runParse pInclude xs
 runPInclude _          = Nothing
 
