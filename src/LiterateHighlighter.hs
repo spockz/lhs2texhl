@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts, Rank2Types #-}
 module Main where
 
 import Data.List
@@ -5,9 +6,17 @@ import Data.List
 import System.Environment( getArgs )
 import System.IO
 
+import Data.Maybe (fromJust)
 
 import Language.Haskell.Exts
 
+import Text.ParserCombinators.UU.Core
+import qualified Text.ParserCombinators.UU.Core as PCC                         ( parse )
+import Text.ParserCombinators.UU.BasicInstances hiding (input)
+import Text.ParserCombinators.UU.Derived
+import Text.ParserCombinators.UU.Utils
+
+import System.FilePath ( takeDirectory )
 -----------------------------
 
 import Base.CLI
@@ -18,18 +27,17 @@ import Literate.SimpleInfo
 
 
 import Language.Markup
+
+
 -----------------------------
 
 
 main = do args <- cmdArgsRun standard
-
-          hSetEncoding stdin  utf8
-          hSetEncoding stdout utf8
-          hSetEncoding stderr utf8
+          goUTF8
          
-          case (action args) of
+          case action args of
             ListCommands -> putStr newCommands
-            _            -> if (agda_mode args)
+            _            -> if agda_mode args
                               then
                                 error "Agda mode is currently not supported."
                               else 
@@ -45,10 +53,43 @@ main = do args <- cmdArgsRun standard
                                    let writer = writeOutput hOutput
                                    hSetEncoding hOutput utf8
                                    mapM_ (\file -> runHaskell file
-                                          >>= (flip writer) Literate.Haskell.mapping)
+                                          >>= flip writer Literate.Haskell.mapping)
                                          (input args)
                                    hClose hOutput
+        goUTF8 = do hSetEncoding stdin  utf8
+                    hSetEncoding stdout utf8
+                    hSetEncoding stderr utf8                                   
+
+discoverFiles :: FilePath -> IO [FilePath]
+discoverFiles fp = do contents  <- fmap ( map ((base ++) . fromJust) 
+                                        . filter isJust 
+                                        . map runPInclude 
+                                        . lines) 
+                                        (readFile fp)
+                      files <- mapM discoverFiles contents
+                      return (nub $ fp : concat files)
+  where files = undefined
+        base = takeDirectory fp ++ "/"
+
+  
+runPInclude = runParse pInclude
+
+runParse :: Show t => Parser t -> String -> Maybe t
+runParse p inp = let r@(a, errors) = PCC.parse ( (,) <$> p <*> pEnd) (createStr (LineColPos 0 0 0) inp)
+                 in if null errors then
+                        Just a
+                      else
+                        Nothing
+  
+pInclude :: Parser FilePath
+pInclude = (++ ".lhs") <$> (   pSymbol "%"
+                           *>  pSymbol "include"
+                           *>  pSome (pLetter <|> pDigit <|> pSym '/')
+                           <*  pSymbol ".lhs")
         
+isJust :: Maybe a -> Bool        
+isJust (Nothing) = False
+isJust (Just  _) = True
                     
 lhs2TeXSafe :: (String, String) -> Bool
 lhs2TeXSafe ("()" , _)  = False
