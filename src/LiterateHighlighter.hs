@@ -44,13 +44,15 @@ main = do args <- cmdArgsRun standard
                                 printFormatting args
 
   where printFormat keyword (seek, rep) = "%format " ++ seek ++ " = \" {\\lhsCH" ++ keyword ++ "{" ++ rep ++ "}}\"" 
-        writeOutput output si mapping = 
+        writeOutput output mapping si = 
                       mapM_  (\(keyword, f) -> mapM_ (hPutStrLn output . printFormat keyword) 
                                                      (filter lhs2TeXSafe (f si))
                              ) 
                              mapping
         printFormatting args = do  hOutput <- openUTF8File (output args)
-                                   let writer = flip $ writeOutput hOutput
+                                   let writer m (Right si) = writeOutput hOutput m si
+                                       writer _ (Left err) = hPutStrLn stderr $ "There was an error, a file has been skipped:" ++ err
+
                                    files  <- fmap (nub . concat)
                                                   (mapM discoverFiles (input args))
 

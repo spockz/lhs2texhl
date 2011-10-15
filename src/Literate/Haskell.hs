@@ -28,11 +28,11 @@ parseFile fp = parseFileWithMode (defaultParseMode { fixities      = Just baseFi
                                  )
                                  fp
 
-runHaskell :: FilePath -> IO SimpleInfo
+runHaskell :: FilePath -> IO (Either String SimpleInfo)
 runHaskell fp = do mod <- parseFile fp
                    case mod of
-                     (ParseOk m)           -> return $ getSimpleInfo m
-                     (ParseFailed loc err) -> error $ 
+                     (ParseOk m)           -> (return . Right) (getSimpleInfo m)
+                     (ParseFailed loc err) -> (return . Left) $ 
                                                 "Parsing failed at `" 
                                                 ++ show loc
                                                 ++ " " ++ err

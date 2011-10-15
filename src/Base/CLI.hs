@@ -22,9 +22,11 @@ data ProgramOptions = ProgramOptions
 
 usage :: String
 usage = unlines 
-          [ programName ++" "++ programVersion ++" - A lhs2TeX Syntax Coloring pre-processor"
+          [ programName ++" "++ programVersion ++" - A lhs2TeX Syntax Colouring preprocessor"
           , "Consult the README file for extra information or visit:\n"
-          , "  https://github.com/spockz/lhs2texhl"
+          , "    https://github.com/spockz/lhs2texhl"
+          , "  and "
+          , "    http://alessandrovermeulen.me/projects/lhs2texhl\n"
           , "Copyright 2010, Alessandro Vermeulen <me@alessandrovermeulen.me>" ]
 
 newCommands :: String
