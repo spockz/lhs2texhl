@@ -61,10 +61,7 @@ main = do args <- cmdArgsRun standard
                     hSetEncoding stderr utf8                                   
 
 discoverFiles :: FilePath -> IO [FilePath]
-discoverFiles fp = do contents  <- fmap ( map ((base ++) . fromJust) 
-                                        . filter isJust 
-                                        . map runPInclude 
-                                        . lines) 
+discoverFiles fp = do contents  <- fmap (\xs -> [base ++ x | Just x <- map runPInclude (lines xs)])
                                         (readFile fp)
                       files <- mapM discoverFiles contents
                       return (nub $ fp : concat files)
@@ -75,7 +72,8 @@ discoverFiles fp = do contents  <- fmap ( map ((base ++) . fromJust)
 runPInclude = runParse pInclude
 
 runParse :: Show t => Parser t -> String -> Maybe t
-runParse p inp = let r@(a, errors) = PCC.parse ( (,) <$> p <*> pEnd) (createStr (LineColPos 0 0 0) inp)
+runParse p inp = let r@(a, errors) = PCC.parse (  (,) <$> p <*> pEnd) 
+                                               (createStr (LineColPos 0 0 0) inp)
                  in if null errors then
                         Just a
                       else

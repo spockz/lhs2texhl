@@ -1,5 +1,5 @@
 Name:               lhs2TeX-hl
-Version:            0.1.4.4
+Version:            0.1.4.5
 Cabal-Version:      >= 1.6
 License:            MIT
 Author:             Alessandro Vermeulen <me@alessandrovermeulen.me>
@@ -29,6 +29,8 @@ Executable lhs2TeX-hl
                   , haskell-src-exts == 1.11.1
                   , syb >= 0.1.0.1
                   , cmdargs >= 0.1
+                  , filepath == 1.2.0.0
+                  , uu-parsinglib >= 2.7
   hs-source-dirs:   src
   Other-Modules:    Data.Data, Data.List.Utils, Data.String.Utils, 
                     Language.LaTeX, Language.Markup, Literate.Agda,
