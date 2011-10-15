@@ -69,7 +69,8 @@ discoverFiles fp = do contents  <- fmap (\xs -> [base ++ x | Just x <- map runPI
         base = takeDirectory fp ++ "/"
 
   
-runPInclude = runParse pInclude
+runPInclude xs@('%':_) = runParse pInclude xs
+runPInclude _          = Nothing
 
 runParse :: Show t => Parser t -> String -> Maybe t
 runParse p inp = let r@(a, errors) = PCC.parse (  (,) <$> p <*> pEnd) 
