@@ -158,6 +158,14 @@ KNOWN ISSUES
 
 CHANGES
 -------
+0.1.4.5::
+  * Added support for recursively traversing includes of .lhs files
+  * The program now doesn't fail completely when haskell-src-exts fails to parse
+    a file. An error is reported and the program continues. :) A fmt file is
+    still generated.
+  * Removed a faulty command from the list.
+  * Added a new url.
+  * Cleaned up some code. (Probably introduced other ugly code) 
 0.1.4.2::
   * Removed trace statement
 0.1.4.1::

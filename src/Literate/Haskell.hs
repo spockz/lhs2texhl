@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE RankNTypes #-}
-module Literate.Haskell (runHaskell, mapping, fromParse) where
+module Literate.Haskell (runHaskell, mapping) where
 
 import Data.List (nub)
 import Data.Maybe
@@ -56,7 +56,7 @@ searchTypes (TyCon n) = [Type (prettyPrint n)]
 searchTypes _         = []
 
 searchConDecl :: ItemQuery ConDecl
-searchConDecl (ConDecl (i) _)      = [Constructor $ prettyPrint i]
+searchConDecl (ConDecl i _)      = [Constructor $ prettyPrint i]
 searchConDecl (InfixConDecl _ i _) = [Constructor $ prettyPrint i]
 searchConDecl (RecDecl i _)        = [Constructor $ prettyPrint i]
 
@@ -71,7 +71,7 @@ searchExp (InfixApp _ qop _)  = [Operator $ prettyPrint qop]
 searchExp _                   = []
 
 searchMat :: ItemQuery Match
-searchMat (Match _ (i) _ _ _ _)  = [Function $ prettyPrint i]
+searchMat (Match _ i _ _ _ _)  = [Function $ prettyPrint i]
 
 searchDecl :: ItemQuery Decl
 searchDecl (TypeSig _ names t)  = case t of
@@ -144,25 +144,7 @@ mtypes :: SimpleInfo -> [(String, String)]
 mtypes SimpleInfo{types} = map dp types
 moperators SimpleInfo{operators} = map (\ a -> (a, "\\ \\mathbin{"++ makeLatexSafe a++"}\\ ")) 
                                        operators
-mconstructors SimpleInfo{constructors} = map (dp) constructors
-mfunctions SimpleInfo{functions   } = map (dp) functions
-mclasses SimpleInfo{classes}        = map (dp) classes
-mconstants SimpleInfo{constants}    = map (dp) constants
-
-
-
-fooz = [4, 13, 42]
-douz = [4.0, 13.0, 42.0]
-
-
-
-(<++>) :: a -> b -> a
-(<++>) a b = a
-
-tid :: Typeable a => a -> a
-tid = id
-
-
-fromParse (ParseOk m) = m
-
-
+mconstructors SimpleInfo{constructors} = map dp constructors
+mfunctions SimpleInfo{functions   }    = map dp functions
+mclasses SimpleInfo{classes}           = map dp classes
+mconstants SimpleInfo{constants}       = map dp constants
