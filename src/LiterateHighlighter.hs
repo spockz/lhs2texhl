@@ -79,10 +79,7 @@ runPInclude _          = Nothing
 runParse :: Show t => Parser t -> String -> Maybe t
 runParse p inp = let r@(a, errors) = PCC.parse (  (,) <$> p <*> pEnd) 
                                                (createStr (LineColPos 0 0 0) inp)
-                 in if null errors then
-                        Just a
-                      else
-                        Nothing
+                 in if null errors then Just a else Nothing
   
 pInclude :: Parser FilePath
 pInclude = (++ ".lhs") <$> (   pSymbol "%"
@@ -97,4 +94,6 @@ isJust (Just  _) = True
 lhs2TeXSafe :: (String, String) -> Bool
 lhs2TeXSafe ("()" , _)  = False
 lhs2TeXSafe _           = True
+
+
 

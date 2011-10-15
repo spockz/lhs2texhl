@@ -29,7 +29,7 @@ Executable lhs2TeX-hl
                   , haskell-src-exts == 1.11.1
                   , syb >= 0.1.0.1
                   , cmdargs >= 0.1
-                  , filepath == 1.2.0.0
+                  , filepath == 1.2
                   , uu-parsinglib >= 2.7
   hs-source-dirs:   src
   Other-Modules:    Data.Data, Data.List.Utils, Data.String.Utils, 
