@@ -52,8 +52,11 @@ makeLatexSafe = replace ">" "\\textgreater"
               
               . replace "\\" "\\lambda " -- argh
 
+makeLHS2TexSafe = replace "(" "\"("
+                . replace ")" ")\""
+
 char :: Integer -> String
 char n = "\\ \\char''" ++ show n ++"\\ "
               
 dp :: String -> (String, String)
-dp a = (a, (markup . makeLatexSafe) a)
+dp a = (makeLHS2TexSafe a, (markup . makeLatexSafe) a)
