@@ -43,7 +43,7 @@ main = do args <- cmdArgsRun standard
                               else 
                                 printFormatting args
 
-  where printFormat keyword (seek, rep) = "%format " ++ seek ++ " = \"{\\lhsCH" ++ keyword ++ "{" ++ rep ++ "}}\"" 
+  where printFormat keyword (seek, rep) = "%format " ++ seek ++ " = \"\\lhsCH" ++ keyword ++ "{" ++ rep ++ "}\"" 
         writeOutput output mapping si = 
                       mapM_  (\(keyword, f) -> mapM_ (hPutStrLn output . printFormat keyword) 
                                                      (filter lhs2TeXSafe (f si))
