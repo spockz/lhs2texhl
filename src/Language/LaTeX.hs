@@ -58,5 +58,5 @@ makeLHS2TexSafe = replace "(" "\"("
 char :: Integer -> String
 char n = "\\ \\char''" ++ show n ++"\\ "
               
-dp :: String -> (String, String)
-dp a = (makeLHS2TexSafe a, (markup . makeLatexSafe) a)
+dp :: String -> String -> (String, String)
+dp wrap a = (makeLHS2TexSafe a, ((\a -> "\\"++wrap++"{"++a++"}") . markup . makeLatexSafe) a)

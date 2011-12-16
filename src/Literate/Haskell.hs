@@ -141,10 +141,10 @@ mapping = [
           ]
           
 mtypes :: SimpleInfo -> [(String, String)]
-mtypes SimpleInfo{types} = map dp types
-moperators SimpleInfo{operators} = map (\ a -> (a, "\\mathbin{"++ makeLatexSafe a++"}")) 
-                                       operators
-mconstructors SimpleInfo{constructors} = map dp constructors
-mfunctions SimpleInfo{functions   }    = map dp functions
-mclasses SimpleInfo{classes}           = map dp classes
-mconstants SimpleInfo{constants}       = map dp constants
+mtypes SimpleInfo{types}               = map (dp "Varid") types
+moperators SimpleInfo{operators}       = map (\ a -> (a, "\\mathbin{"++ makeLatexSafe a++"}")) 
+                                             operators
+mconstructors SimpleInfo{constructors} = map (dp "Conid") constructors
+mfunctions SimpleInfo{functions   }    = map (dp "VarId") functions
+mclasses SimpleInfo{classes}           = map (dp "Varid") classes
+mconstants SimpleInfo{constants}       = map (dp "Varid") constants
