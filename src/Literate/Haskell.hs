@@ -145,6 +145,6 @@ mtypes SimpleInfo{types}               = map (dp "Varid") types
 moperators SimpleInfo{operators}       = map (\ a -> (a, "\\mathbin{"++ makeLatexSafe a++"}")) 
                                              operators
 mconstructors SimpleInfo{constructors} = map (dp "Conid") constructors
-mfunctions SimpleInfo{functions   }    = map (dp "VarId") functions
+mfunctions SimpleInfo{functions   }    = map (dp "Varid") functions
 mclasses SimpleInfo{classes}           = map (dp "Varid") classes
 mconstants SimpleInfo{constants}       = map (dp "Varid") constants
