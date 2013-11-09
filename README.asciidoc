@@ -8,7 +8,7 @@ formatting rules used by lhs2TeX. This tool is to be used in combination with
 lhs2TeX. 
 
 
-It aims to detect the `kind' of an identifier either by it's use or it's
+It aims to detect the `kind' of an identifier either by its use or its
 declaration. Trying to detect both local declarations and usages.
 
 Regards,
